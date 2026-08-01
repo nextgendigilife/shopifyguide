@@ -16,7 +16,7 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', 'YOUR_PIXEL_ID');
+fbq('init', '2120262358873667');
 fbq('track', 'PageView');
 </script>
 <!-- ================================================================================= -->
@@ -189,18 +189,6 @@ fbq('track', 'PageView');
   .order-left ul{ list-style:none; margin-top:20px; }
   .order-left ul li{ display:flex; gap:9px; font-size:14px; color:#dbe1ea; margin-bottom:10px; }
   .order-left ul li:before{ content:"→"; color:var(--green-500); font-weight:800; }
-  .order-left .mini-timer{
-    margin-top:22px; padding:16px 16px; border-radius:12px;
-    background:rgba(220,38,38,0.18); border:1.5px solid rgba(248,113,113,0.5);
-    font-size:13.5px; color:#fecaca; font-weight:700;
-  }
-  .order-left .mini-timer .mini-clock{
-    display:flex; gap:8px; margin-top:8px; font-family:'Sora',sans-serif;
-  }
-  .order-left .mini-timer .mini-clock span{
-    background:rgba(255,255,255,0.14); border:1px solid rgba(248,113,113,0.4);
-    border-radius:7px; padding:6px 10px; font-size:19px; font-weight:800; color:#fff;
-  }
 
   .order-right{ padding:38px 32px; }
   .order-right h2{ font-size:20px; margin-bottom:4px; }
@@ -215,11 +203,30 @@ fbq('track', 'PageView');
   .field input:focus, .field select:focus{ outline:none; border-color:var(--green-500); background:#fff; }
   .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
+  /* ---------- payment box: big, bold, copyable number ---------- */
   .pay-box{
     background:var(--green-50); border:1.5px dashed var(--green-500); border-radius:12px;
-    padding:14px; font-size:13px; color:#1f5132; margin:14px 0 18px;
+    padding:16px; font-size:13px; color:#1f5132; margin:14px 0 18px;
   }
-  .pay-box b{ display:block; margin-bottom:4px; font-size:13px; }
+  .pay-box b{ display:block; margin-bottom:10px; font-size:13.5px; }
+  .pay-number-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#fff; border:1.5px solid var(--green-500); border-radius:10px;
+    padding:12px 14px; margin-bottom:8px;
+  }
+  .pay-number{
+    font-family:'Sora',sans-serif; font-weight:800; font-size:24px; color:var(--ink);
+    letter-spacing:0.5px;
+  }
+  .pay-account-title{ font-size:12px; color:var(--ink-muted); margin-top:2px; }
+  .copy-btn{
+    flex-shrink:0; display:flex; align-items:center; gap:6px;
+    background:var(--green-600); color:#fff; border:none; border-radius:8px;
+    padding:9px 14px; font-family:'Sora',sans-serif; font-weight:700; font-size:12.5px;
+    cursor:pointer; transition:background .15s ease;
+  }
+  .copy-btn:hover{ background:var(--green-700, #15803d); }
+  .copy-btn.copied{ background:var(--ink); }
 
   .submit-btn{
     width:100%; background:linear-gradient(135deg,var(--green-500),var(--green-600));
@@ -242,6 +249,7 @@ fbq('track', 'PageView');
     .strip .container{ grid-template-columns:repeat(2,1fr); }
     .field-row{ grid-template-columns:1fr; }
     .testi-grid{ grid-template-columns:1fr; }
+    .pay-number{ font-size:20px; }
   }
 </style>
 </head>
@@ -277,7 +285,7 @@ fbq('track', 'PageView');
         </div>
       </div>
       <div class="hero-visual">
-        <img src="assets/main-poster.webp" alt="Shopify Success Blueprint PDF Guide">
+        <img src="main-poster.png" alt="Shopify Success Blueprint PDF Guide">
         <div class="burst">SIRF<span class="num">249</span>PKR</div>
       </div>
     </div>
@@ -370,14 +378,14 @@ fbq('track', 'PageView');
                 <input type="email" id="email" name="email" placeholder="PDF isi email par ayegi" required>
               </div>
               <div class="field">
-                <label for="phone">WhatsApp number</label>
-                <input type="tel" id="phone" name="phone" placeholder="03xx-xxxxxxx" required>
+                <label for="whatsapp">WhatsApp number</label>
+                <input type="tel" id="whatsapp" name="whatsapp" placeholder="03xx-xxxxxxx" required>
               </div>
             </div>
 
             <div class="field">
-              <label for="method">Payment method</label>
-              <select id="method" name="method" required>
+              <label for="paymentMethod">Payment method</label>
+              <select id="paymentMethod" name="paymentMethod" required>
                 <option value="">Select karein</option>
                 <option value="Easypaisa">Easypaisa</option>
                 <option value="JazzCash">JazzCash</option>
@@ -386,8 +394,20 @@ fbq('track', 'PageView');
             </div>
 
             <div class="pay-box">
-              <b>Payment instructions</b>
-              PKR 249 send karein: <strong>Easypaisa — 0316-1167180 (Muhammad Hamza)</strong>.
+              <b>💳 Payment Instructions — PKR 249 send karein:</b>
+              <div class="pay-number-row">
+                <div>
+                  <div class="pay-number" id="payNumber">0316-1167180</div>
+                  <div class="pay-account-title">Easypaisa · Muhammad Hamza</div>
+                </div>
+                <button type="button" class="copy-btn" id="copyBtn" onclick="copyPayNumber()">📋 Copy</button>
+              </div>
+              Payment karne ke baad neeche receipt/screenshot upload kar dein.
+            </div>
+
+            <div class="field">
+              <label for="paymentSlip">Payment Receipt / Screenshot</label>
+              <input type="file" id="paymentSlip" name="paymentSlip" accept="image/*" required>
             </div>
 
             <button type="submit" class="submit-btn" id="submitBtn">Order Confirm Karein →</button>
@@ -405,6 +425,22 @@ fbq('track', 'PageView');
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ===================== COPY PAYMENT NUMBER =====================
+    function copyPayNumber(){
+      const number = document.getElementById('payNumber').textContent.trim();
+      const btn = document.getElementById('copyBtn');
+      navigator.clipboard.writeText(number).then(function(){
+        btn.textContent = '✅ Copied';
+        btn.classList.add('copied');
+        setTimeout(function(){
+          btn.textContent = '📋 Copy';
+          btn.classList.remove('copied');
+        }, 1800);
+      }).catch(function(){
+        btn.textContent = 'Copy failed';
+      });
+    }
 
     // ===================== COUNTDOWN TIMER (resets every 24h per visitor) =====================
     (function(){
@@ -432,48 +468,64 @@ fbq('track', 'PageView');
       setInterval(tick, 1000);
     })();
 
-    // ===================== GOOGLE APPS SCRIPT WEB APP URL (replace) =====================
-    const GAS_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
-    // ======================================================================================
+    // ===================== GOOGLE APPS SCRIPT WEB APP URL (from existing working setup) =====================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxDw9SBgvMtycUTKPnoGokT2Nx7MR6XU2msVBYnzzGg-fPZnFpj83D_jvqsse2AkmuDKQ/exec";
+    // ==========================================================================================================
 
     const form = document.getElementById('orderForm');
     const btn = document.getElementById('submitBtn');
     const msg = document.getElementById('formMsg');
 
-    form.addEventListener('submit', async function(e){
+    form.addEventListener('submit', function(e){
       e.preventDefault();
       msg.className = 'form-msg';
       msg.textContent = '';
       btn.disabled = true;
       btn.textContent = 'Processing...';
 
-      const data = new URLSearchParams(new FormData(form));
-
-      try {
-        if (typeof fbq === 'function') {
-          fbq('track', 'InitiateCheckout', { value: 249, currency: 'PKR' });
-        }
-
-        const res = await fetch(GAS_URL, { method: 'POST', body: data });
-        const json = await res.json();
-
-        if (json.result === 'success') {
-          if (typeof fbq === 'function') {
-            fbq('track', 'Purchase', { value: 249, currency: 'PKR' });
-          }
-          msg.className = 'form-msg ok';
-          msg.textContent = '✅ Order mil gaya! PDF chand hi minutes mein aapki email par bhej di jayegi.';
-          form.reset();
-        } else {
-          throw new Error(json.message || 'Unknown error');
-        }
-      } catch (err) {
-        msg.className = 'form-msg err';
-        msg.textContent = '⚠️ Kuch masla ho gaya. Please dobara koshish karein ya WhatsApp par contact karein.';
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Order Confirm Karein →';
+      if (typeof fbq === 'function') {
+        fbq('track', 'InitiateCheckout', { value: 249, currency: 'PKR' });
       }
+
+      const fileInput = document.getElementById('paymentSlip');
+      const fileObj = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = function(){
+        const base64Data = reader.result.split(',')[1];
+        const data = new URLSearchParams();
+        data.append('name', document.getElementById('name').value);
+        data.append('email', document.getElementById('email').value);
+        data.append('whatsapp', document.getElementById('whatsapp').value);
+        data.append('paymentMethod', document.getElementById('paymentMethod').value);
+        data.append('fileContent', base64Data);
+        data.append('fileType', fileObj.type);
+        data.append('fileName', fileObj.name);
+
+        fetch(GAS_URL, { method: 'POST', body: data })
+          .then(res => res.json())
+          .then(json => {
+            if (json.result === 'success') {
+              if (typeof fbq === 'function') {
+                fbq('track', 'Purchase', { value: 249, currency: 'PKR' });
+              }
+              msg.className = 'form-msg ok';
+              msg.textContent = '✅ Order mil gaya! PDF chand hi minutes mein aapki email par bhej di jayegi.';
+              form.reset();
+            } else {
+              throw new Error(json.error || 'Unknown error');
+            }
+          })
+          .catch(() => {
+            msg.className = 'form-msg err';
+            msg.textContent = '⚠️ Kuch masla ho gaya. Please dobara koshish karein ya WhatsApp par contact karein.';
+          })
+          .finally(() => {
+            btn.disabled = false;
+            btn.textContent = 'Order Confirm Karein →';
+          });
+      };
+      reader.readAsDataURL(fileObj);
     });
   </script>
 </body>
